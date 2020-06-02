@@ -1,2 +1,6 @@
 # hervk_kmers
-Extract k-mer freq from WGS reads mapped to HERV-K
+
+# git clone
+git clone https://github.com/shohei-kojima/hervk_kmers
+
+
