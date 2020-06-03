@@ -1,17 +1,20 @@
 # hervk_kmers
 
+# About
+Calculate k-mer occurrence from BAM file. Currently only BAM file is supported (does not support CRAM).
+
 # git clone
 git clone https://github.com/shohei-kojima/hervk_kmers
 
 
-# quick usage for impatient
+# Usage for impatient
 
-## Calculate k-mer freq from all reads
+### Calculate k-mer freq from all reads (e.g. all reads in BAM, including HERV-K)
 ```
 python main.py -b tmp.bam -overwrite
 ```
 
-## Calculate k-mer freq only from non-LTR region of HERV-K
+### Calculate k-mer freq only from non-LTR region of HERV-K
 ```
 python main_hervk.py -b tmp.bam -overwrite
 ```
@@ -29,3 +32,5 @@ If a read contained more than 10 (11 or more) soft cliped region(s), this read w
 ### self.k [default=50]
 Length of k of k-mer.
 
+# Options
+See `python main.py -h`.
