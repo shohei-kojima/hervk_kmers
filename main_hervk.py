@@ -70,7 +70,7 @@ filenames.summary=os.path.join(args.outdir, 'kmer_counts.txt')
 
 
 # 0. preprocess repbase file
-import kmer_count_hervk
-kmer_count_hervk.sam_to_kmer(args, params, filenames)
+import kmer_count_rel_ref_hervk
+kmer_count_rel_ref_hervk.sam_to_kmer(args, params, filenames)
 
 log.logger.info('All analysis finished!')

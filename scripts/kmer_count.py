@@ -73,7 +73,7 @@ def sam_to_kmer(args, params, filenames):
             pos_d[read_pos]= ref_pos
             tmp=[]
             if (len(seq) - (left + right)) >= params.k:
-                for i in range(left, len(seq) - right - params.k + 1):
+                for i in range(left, len(seq) - right - params.k + 1, params.slide_bin):
                     kmer_seq=seq[i:i + params.k]
                     ref='%s:%d-%d' % (chr, pos_d[i], pos_d[i + params.k])  # 0-based start; 1-based end
                     tmp.append([kmer_seq, ref])

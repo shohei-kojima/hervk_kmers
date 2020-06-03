@@ -14,8 +14,9 @@ class load:
         log.logger.debug('started')
         try:
             # default
-            self.max_mut=10
+            self.max_mut=1000
             self.max_clip_len=10
+            self.slide_bin=10
             self.k=50
             params_for_debug=[]
             for k,v in self.__dict__.items():

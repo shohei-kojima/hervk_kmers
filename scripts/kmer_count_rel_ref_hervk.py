@@ -49,7 +49,7 @@ def sam_to_kmer(args, params, filenames):
                     tmp=''
             return length
         
-        def parse_seq_to_kmers(seq, cigar, genome_start, chr):
+        def parse_seq_to_kmers(seq, cigar, genome_start, genome_end, chr):
             # parse cigar
             parsed_cigar=[]
             tmp=''
@@ -73,23 +73,24 @@ def sam_to_kmer(args, params, filenames):
             for c,l in parsed_cigar:
                 if c == 'M':
                     for _ in range(l):
-                        pos_d[read_pos]=ref_pos
+                        pos_d[ref_pos]=read_pos
                         read_pos += 1
                         ref_pos += 1
                 elif c == 'I':
                     for _ in range(l):
-                        pos_d[read_pos]=ref_pos
                         read_pos += 1
                 elif c == 'D':
                     for _ in range(l):
+                        pos_d[ref_pos]=read_pos
                         ref_pos += 1
-            pos_d[read_pos]= ref_pos
+            pos_d[ref_pos]= read_pos
             tmp=[]
             if (len(seq) - (left + right)) >= params.k:
-                for i in range(left, len(seq) - right - params.k + 1, params.slide_bin):
-                    kmer_seq=seq[i:i + params.k]
-                    ref='%s:%d-%d' % (chr, pos_d[i], pos_d[i + params.k])  # 0-based start; 1-based end
-                    tmp.append([kmer_seq, ref])
+                for i in range(genome_start, genome_end - params.k + 1):
+                    if i % params.slide_bin == 0:
+                        kmer_seq=seq[pos_d[i]:pos_d[i + params.k]]
+                        ref='%s:%d-%d' % (chr, i, i + params.k)  # 0-based start; 1-based end
+                        tmp.append([kmer_seq, ref])
             return tmp
 
         import pysam
@@ -120,7 +121,7 @@ def sam_to_kmer(args, params, filenames):
                                     seq=complement(ls[9])
                                 else:
                                     seq=ls[9]
-                                kmers_l=parse_seq_to_kmers(seq, ls[5], int(ls[3]) - 1, ls[2])  # 0-based
+                                kmers_l=parse_seq_to_kmers(seq, ls[5], map_start, map_end, ls[2])  # 0-based
                                 kmers_ls.extend(kmers_l)
                                 for kmer,_ in kmers_l:
                                     kmers_set.add(kmer)
