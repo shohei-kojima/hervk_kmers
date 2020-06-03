@@ -36,7 +36,7 @@ def sam_to_kmer(args, params, filenames):
                     tmp=''
             return length
         
-        def parse_seq_to_kmers(b, seq, cigar, genome_start, chr):
+        def parse_seq_to_kmers(seq, cigar, genome_start, chr):
             # parse cigar
             parsed_cigar=[]
             tmp=''
@@ -53,9 +53,6 @@ def sam_to_kmer(args, params, filenames):
                     left=parsed_cigar[0][1]
                 if parsed_cigar[-1][0] == 'S':
                     right=parsed_cigar[-1][1]
-            if b[-5] == '1':  # read reverse strand
-                seq=complement(ls[9])
-                left,right=right,left
             ref_pos=genome_start
             read_pos=left
             pos_d={}
@@ -104,7 +101,7 @@ def sam_to_kmer(args, params, filenames):
                             seq=complement(ls[9])
                         else:
                             seq=ls[9]
-                        kmers_l=parse_seq_to_kmers(b, seq, ls[5], int(ls[3]) - 1, ls[2])  # 0-based
+                        kmers_l=parse_seq_to_kmers(seq, ls[5], int(ls[3]) - 1, ls[2])  # 0-based
                         kmers_ls.extend(kmers_l)
                         for kmer,_ in kmers_l:
                             kmers_set.add(kmer)
