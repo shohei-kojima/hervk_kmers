@@ -63,8 +63,9 @@ filenames=utils.empclass()
 filenames.summary=os.path.join(args.outdir, 'kmer_counts.txt')
 
 
-# 0. preprocess repbase file
+# 1. K-mer count
 import kmer_count
+log.logger.info('K-mer counting started.')
 kmer_count.sam_to_kmer(args, params, filenames)
 
 log.logger.info('All analysis finished!')
