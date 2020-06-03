@@ -36,6 +36,19 @@ def sam_to_kmer(args, params, filenames):
                     tmp=''
             return length
         
+        def calc_ref_len(cigar):
+            length=0
+            tmp=''
+            for c in cigar:
+                if not c in cigar_op:
+                    tmp += c
+                elif c in cigar_ref_retain:
+                    length += int(tmp)
+                    tmp=''
+                else:
+                    tmp=''
+            return length
+        
         def parse_seq_to_kmers(seq, cigar, genome_start, chr):
             # parse cigar
             parsed_cigar=[]
@@ -87,25 +100,30 @@ def sam_to_kmer(args, params, filenames):
         for line in infile:
             line=line.tostring()
             ls=line.strip().split('\t')
-            if int(ls[1]) < 256:  # only use primary alignment, discard supplementary and duplicate
-                b=bin(int(ls[1]))
-                if b[-2] == '1':   # properly paired
-                    for i in ls[::-1]:
-                        if 'NM:i:' in i:
-                            nm= int(i.replace('NM:i:', ''))
-                    if 'S' in ls[5]:
-                        soft_clip_len=count_clip(ls[5])
-                    else:
-                        soft_clip_len=0
-                    if nm <= params.max_mut and soft_clip_len <= params.max_clip_len:
-                        if b[-5] == '1':
-                            seq=complement(ls[9])
-                        else:
-                            seq=ls[9]
-                        kmers_l=parse_seq_to_kmers(seq, ls[5], int(ls[3]) - 1, ls[2])  # 0-based
-                        kmers_ls.extend(kmers_l)
-                        for kmer,_ in kmers_l:
-                            kmers_set.add(kmer)
+            if ls[2] == args.refseq_id:   # only specified refseq
+                ref_len=calc_ref_len(ls[5])
+                map_start= int(ls[3]) - 1  # 0-based
+                map_end= map_start + ref_len
+                if args.refseq_start <= map_start and map_end <= args.refseq_end:
+                    if int(ls[1]) < 256:  # only use primary alignment, discard supplementary and duplicate
+                        b=bin(int(ls[1]))
+                        if b[-2] == '1':   # properly paired
+                            for i in ls[::-1]:
+                                if 'NM:i:' in i:
+                                    nm= int(i.replace('NM:i:', ''))
+                            if 'S' in ls[5]:
+                                soft_clip_len=count_clip(ls[5])
+                            else:
+                                soft_clip_len=0
+                            if nm <= params.max_mut and soft_clip_len <= params.max_clip_len:
+                                if b[-5] == '1':
+                                    seq=complement(ls[9])
+                                else:
+                                    seq=ls[9]
+                                kmers_l=parse_seq_to_kmers(seq, ls[5], int(ls[3]) - 1, ls[2])  # 0-based
+                                kmers_ls.extend(kmers_l)
+                                for kmer,_ in kmers_l:
+                                    kmers_set.add(kmer)
         kmers_set=sorted(list(kmers_set))
         kmers_d={}
         for kmer in kmers_set:
