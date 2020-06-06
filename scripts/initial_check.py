@@ -44,7 +44,28 @@ def check(args, argv):
             if which(i) is None:
                 log.logger.error('%s not found in $PATH. Please check %s is installed and added to PATH.' % (i, i))
                 exit(1)
-
+        
+        # check files
+        if args.c is not None:
+            if os.path.exists(args.c) is False:
+                log.logger.error('CRAM file (%s) was not found.' % args.c)
+                exit(1)
+        elif args.b is not None:
+            if os.path.exists(args.b) is False:
+                log.logger.error('BAM file (%s) was not found.' % args.b)
+                exit(1)
+        else:
+            log.logger.error('Please specify BAM or CRAM file (-b or -c option).')
+            exit(1)
+            
+        if args.c is not None:
+            if args.fa is None:
+                log.logger.error('Reference genome (%s) was not specified.' % args.fa)
+                exit(1)
+            elif os.path.exists(args.fa) is False:
+                log.logger.error('Reference genome (%s) was not found.' % args.fa)
+                exit(1)
+        
         # check prerequisite modules
         from Bio.Seq import Seq
         import gzip

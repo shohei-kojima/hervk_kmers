@@ -93,7 +93,10 @@ def sam_to_kmer(args, params, filenames):
             return tmp
 
         import pysam
-        infile=pysam.AlignmentFile(args.b, 'rb')
+        if args.c is not None:
+            infile=pysam.AlignmentFile(args.b, 'rb')
+        else:
+            infile=pysam.AlignmentFile(args.c, 'rc', reference_filename=args.fa)
         
         kmers_set=set()
         kmers_ls=[]
