@@ -17,7 +17,8 @@ class load:
             self.max_mut=1000
             self.max_clip_len=10
             self.slide_bin=10
-            self.k=50
+            self.k=args.k
+            # user-definded k
             params_for_debug=[]
             for k,v in self.__dict__.items():
                 params_for_debug.append('%s=%s' % (k, str(v)))
